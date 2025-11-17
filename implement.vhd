@@ -46,6 +46,11 @@ entity mux_n is
   );
 end entity mux_n;
 
+architecture mux of mux_n is
+  begin
+    dOut <= in0 when sel = '0' else in0;
+end architecture mux;
+
 entity memoriaInstrucoes is
   generic (
     addressSize : natural := 8;
