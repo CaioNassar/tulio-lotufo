@@ -104,6 +104,48 @@ entity memoriaDados is
   );
 end entity memoriaDados;
 
+architecture dados of memoriaDados is
+  type mem_tipo is array (0 to 2**addressSize - 1) of bit_vector(dataSize - 1 downto 0);
+
+  impure function init_mem return mem_tipo is
+    file     arquivo  : text open read_mode is nome_do_arquivo;
+    variable linha    : line;
+    variable mem_cont : mem_tipo;
+    variable temp_bv  : bit_vector(dataSize-1 downto 0);
+    variable i := 0;
+
+  begin
+
+    for j in mem_cont'range loop
+      mem_cont(j) := (others => '0');
+    end loop;
+
+    while not endfile(arquivo) and i < mem_cont'lenght loop
+      readline(arquivo, linha);
+      read(linha, temp_bv);
+      mem_cont(i) := temp_bv;
+      i := i + 1;
+    end loop;
+
+    return mem_cont;
+  end function;
+
+  signal mem : mem_tipo := init_mem;
+
+  begin
+    write_process: process(clock)
+    begin
+      if clock'event and clock = '1' then
+        if wr = '1' then
+          mem(to_integer(unsigned(to_stdlogicvector(addr)))) <= data_i;
+        end if;
+      end if;
+    end process write_process;
+
+  data_o <= memory(to_integer(unsigned(to_stdlogicvector(addr))));
+
+end dados architecture;
+
 entity adder_n is
   generic (dataSize: natural := 64);
   port (
