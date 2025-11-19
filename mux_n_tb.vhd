@@ -16,10 +16,10 @@ architecture testbench of mux_n_tb is
     component mux_n is
         generic (dataSize: natural := 64);
         port (
-            in0_tb : in bit_vector(dataSize-1 downto 0);
-            in1_tb : in bit_vector(dataSize-1 downto 0);
-            sel_tb : in bit;
-            dOut_tb : out bit_vector(dataSize-1 downto 0)
+            in0 : in bit_vector(dataSize-1 downto 0);
+            in1 : in bit_vector(dataSize-1 downto 0);
+            sel : in bit;
+            dOut : out bit_vector(dataSize-1 downto 0)
         );
     end component mux_n;
     
@@ -43,21 +43,21 @@ begin
         
         -- Teste 1: sel = '0' -> saída deve ser in0
         sel <= '0';
-        wait for PERIOD;
+        wait for 10 ns;
         assert dOut = in0
             report "Erro: sel='0' mas saída não é in0"
             severity error;
         
         -- Teste 2: sel = '1' -> saída deve ser in1
         sel <= '1';
-        wait for PERIOD;
+        wait for 10 ns;
         assert dOut = in1
             report "Erro: sel='1' mas saída não é in1"
             severity error;
         
         -- Teste 3: sel = '0' novamente
         sel <= '0';
-        wait for PERIOD;
+        wait for 10 ns;
         assert dOut = in0
             report "Erro: sel='0' mas saída não é in0"
             severity error;
@@ -66,16 +66,16 @@ begin
         in0 <= X"FFFFFFFFFFFFFFFF";  -- Todos 1s
         in1 <= X"0000000000000000";  -- Todos 0s
         
-        wait for PERIOD;
+        wait for 10 ns;
         
         sel <= '1';
-        wait for PERIOD;
+        wait for 10 ns;
         assert dOut = in1
             report "Erro: sel='1' mas saída não é in1 (teste com novos valores)"
             severity error;
         
         sel <= '0';
-        wait for PERIOD;
+        wait for 10 ns;
         assert dOut = in0
             report "Erro: sel='0' mas saída não é in0 (teste com novos valores)"
             severity error;
