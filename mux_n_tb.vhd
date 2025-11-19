@@ -44,23 +44,17 @@ begin
         -- Teste 1: sel = '0' -> saída deve ser in0
         sel <= '0';
         wait for 10 ns;
-        assert dOut = in0
-            report "Erro: sel='0' mas saída não é in0"
-            severity error;
+        assert (dOut = in0) report "Erro: sel='0' mas saída não é in0" severity error;
         
         -- Teste 2: sel = '1' -> saída deve ser in1
         sel <= '1';
         wait for 10 ns;
-        assert dOut = in1
-            report "Erro: sel='1' mas saída não é in1"
-            severity error;
+        assert (dOut = in1) report "Erro: sel='1' mas saída não é in1" severity error;
         
         -- Teste 3: sel = '0' novamente
         sel <= '0';
         wait for 10 ns;
-        assert dOut = in0
-            report "Erro: sel='0' mas saída não é in0"
-            severity error;
+        assert (dOut = in0) report "Erro: sel='0' mas saída não é in0" severity error;
         
         -- Teste com outros valores
         in0 <= X"FFFFFFFFFFFFFFFF";  -- Todos 1s
@@ -70,15 +64,11 @@ begin
         
         sel <= '1';
         wait for 10 ns;
-        assert dOut = in1
-            report "Erro: sel='1' mas saída não é in1 (teste com novos valores)"
-            severity error;
+        assert (dOut = in1) report "Erro: sel='1' mas saída não é in1 (teste com novos valores)" severity error;
         
         sel <= '0';
         wait for 10 ns;
-        assert dOut = in0
-            report "Erro: sel='0' mas saída não é in0 (teste com novos valores)"
-            severity error;
+        assert (dOut = in0) report "Erro: sel='0' mas saída não é in0 (teste com novos valores)" severity error;
         
         -- Finalização do teste
         report "Testbench concluído!" severity note;
