@@ -35,7 +35,7 @@ begin
 
 
 architecture ula1bit_arq of ula1bit is
-    signal a_sinal, b_sinal : bit;
+    signal a_sinal, b_sinal, soma : bit;
     component fulladder is
     port(
         a    : in  bit; 
@@ -52,7 +52,7 @@ begin
         a => a_sinal, 
         b => b_sinal,
         cin => cin,
-        s => s,
+        s => soma,
         cout => cout
     );
 
@@ -65,7 +65,7 @@ begin
 with operation select
 result <= a AND b when "00",
           a OR b when "01",
-          s when "10",
+          soma when "10",
           b when "11";
 
 end architecture;
