@@ -10,5 +10,5 @@ end entity mux_n;
 
 architecture mux of mux_n is
   begin
-    dOut <= in0 when sel = '0' else in0;
+    dOut <= in0 when sel = '0' else in1;
 end architecture mux;
