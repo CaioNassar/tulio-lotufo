@@ -15,3 +15,34 @@ entity sign_extend is
                   -- com tamanho dataOSize e sinal estendido
   );
 end entity sign_extend;
+
+  architecture se of sign_extend is 
+begin
+  recortador: process(inData, inDataStart, inDataEnd)
+    variable comeco      : integer;
+    variable fim         : integer;
+    variable tamanho     : integer;
+    variable bitExtensor : bit;
+    variable recorte     : bit_vector(dataOSize-1 downto 0);
+    variable i           : integer;
+  begin
+    comeco := to_integer(unsigned(inDataStart));
+    fim := to_integer(unsigned(inDataEnd));
+    tamanho := comeco - fim + 1;
+    bitExtensor := inData(comeco);
+
+    i := 0;
+    while i < tamanho loop
+      recorte(i) := inData(fim + i);
+      i := i + 1;
+    end loop;
+
+    while i < dataOSize loop
+      recorte(i) := bitExtensor;
+      i := i + 1;
+    end loop;
+
+    outData <= recorte;
+  end process recortador;
+end architecture se;
+    
