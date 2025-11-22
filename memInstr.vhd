@@ -14,9 +14,9 @@ entity memoriaInstrucoes is
     data : out bit_vector (dataSize-1 downto 0)
   );
 end entity memoriaInstrucoes;
-
+-------------------------------------------------------
 architecture instrucao of memoriaInstrucoes is
-    type mem_tipo is array(0 to 2**addressSize - 1) of bit_vector (dataSize-1 downto 0);
+    type mem_tipo is array(0 to 2**addressSize - 1) of bit_vector(dataSize-1 downto 0);
     
     impure function init_mem(nome_do_arquivo : in string) return mem_tipo is
         file     arquivo  : text open read_mode is nome_do_arquivo;

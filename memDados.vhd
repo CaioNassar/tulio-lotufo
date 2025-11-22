@@ -19,7 +19,7 @@ entity memoriaDados is
 end entity memoriaDados;
 
 architecture dados of memoriaDados is
-  type mem_tipo is array (0 to 2**addressSize - 1) of bit_vector(dataSize - 1 downto 0);
+  type mem_tipo is array(0 to 2**addressSize - 1) of bit_vector(dataSize - 1 downto 0);
 
   impure function init_mem return mem_tipo is
     file     arquivo  : text open read_mode is datFileName;
