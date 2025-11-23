@@ -21,16 +21,20 @@ entity fulladder is
     b    : in  bit; 
     cin  : in bit;
     s    : out bit;
-    cout : out bit
+    cout : out bit;
+    overflow : out bit
   );
 end entity fulladder;
 
 architecture structural of fulladder is
   signal axorb: bit;
+  signal cout_int : bit;
 begin
   axorb <= a xor b;
   s <= axorb xor cin;
-  cout <= (axorb and cin) or (a and b);
+  cout_int <= (axorb and cin) or (a and b);
+  overflow <= cout_int xor cin;
+  cout <= cout_int;
  end architecture;
 
 
@@ -42,25 +46,27 @@ architecture ula1bit_arq of ula1bit is
         b    : in  bit; 
         cin  : in bit;
         s    : out bit;
-        cout : out bit 
+        cout : out bit; 
+        overflow : out bit
     );
     end component;
 
 begin
+    a_sinal <= a when ainvert = '0' else
+               NOT(a) when ainvert = '1';  
+
+    b_sinal <= b when binvert = '0' else
+               NOT(b) when binvert = '1';  
+    
     somador : fulladder 
     port map(
         a => a_sinal, 
         b => b_sinal,
         cin => cin,
         s => soma,
-        cout => cout
+        cout => cout,
+        overflow => overflow
     );
-
-    a_sinal <= a when ainvert = '0' else
-               NOT(a) when ainvert = '1';  
-
-    b_sinal <= b when binvert = '0' else
-               NOT(b) when binvert = '1';  
 
 with operation select
 result <= a_sinal AND b_sinal when "00",
