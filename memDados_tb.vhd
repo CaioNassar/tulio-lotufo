@@ -22,12 +22,12 @@ architecture test_cases of tb_memDados is
     end component memDados;
 
     -- Configurações
-    constant T_ADDR : natural := 4; -- Vamos testar com 4 bits (16 posições)
+    constant T_ADDR : natural := 4; 
     constant T_DATA : natural := 4;
 
-    -- Sinais (Tudo BIT agora)
+    -- Sinais
     signal s_clock   : bit := '0';
-    signal s_wr      : bit := '0'; -- Write Enable (Ativo Alto na sua implementação)
+    signal s_wr      : bit := '0'; 
     signal s_addr    : bit_vector(T_ADDR-1 downto 0) := (others => '0');
     signal s_data_i  : bit_vector(T_DATA-1 downto 0) := (others => '0');
     signal s_data_o  : bit_vector(T_DATA-1 downto 0);
@@ -82,7 +82,7 @@ begin
         s_wr <= '0';
         wait until s_clock = '1';
 
-        for i in 0 to 15 loop
+        for i in 0 to (2**T_ADDR - 1) loop
             -- Seleciona Endereço
             s_addr <= bit_vector(to_unsigned(i, T_ADDR));
             
