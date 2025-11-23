@@ -63,9 +63,9 @@ begin
                NOT(b) when binvert = '1';  
 
 with operation select
-result <= a AND b when "00",
-          a OR b when "01",
+result <= a_sinal AND b_sinal when "00",
+          a_sinal OR b_sinal when "01",
           soma when "10",
-          b when "11";
+          b_sinal when "11";
 
 end architecture;
