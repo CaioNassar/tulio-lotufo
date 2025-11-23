@@ -5,7 +5,7 @@ use std.textio.all;
 entity tb_memoriaInstrucoes is
 end entity tb_memoriaInstrucoes;
 
-architecture test_cases of tb-memoriaInstrucoes is
+architecture test_cases of tb_memoriaInstrucoes is
 
     component memoriaInstrucoes is
         generic (
