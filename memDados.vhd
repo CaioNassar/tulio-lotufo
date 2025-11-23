@@ -51,7 +51,7 @@ architecture dados of memoriaDados is
     begin
       if clock'event and clock = '1' then
         if wr = '1' then
-          mem(to_integer(unsigned(unsigned(addr)))) <= data_i;
+          mem(to_integer(unsigned(addr))) <= data_i;
         end if;
       end if;
     end process write_process;
