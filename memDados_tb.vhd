@@ -44,7 +44,7 @@ begin
         generic map (
             addressSize => T_ADDR,
             dataSize    => T_DATA,
-            datFileName => "preenche_tb.dat"
+            datFileName => "memDados_conteudo_inicial.dat"
         )
         port map (
             clock  => s_clock,
