@@ -2,12 +2,12 @@ library ieee;
 use ieee.numeric_bit.all;
 use std.textio.all;
 
-entity tb_memInstr is
-end entity tb_memInstr;
+entity tb_memoriaInstrucoes is
+end entity tb_memoriaInstrucoes;
 
-architecture test_cases of tb_memInstr is
+architecture test_cases of tb-memoriaInstrucoes is
 
-    component memInstr is
+    component memoriaInstrucoes is
         generic (
             addressSize : natural := 8;
             dataSize    : natural := 8;
@@ -17,7 +17,7 @@ architecture test_cases of tb_memInstr is
             addr : in  bit_vector (addressSize-1 downto 0);
             data : out bit_vector (dataSize-1 downto 0)
         );
-    end component memInstr;
+    end component memoriaInstrucoes;
 
     -- Como o arquivo .dat tem 64 linhas, o addressSize deve ser igual a 6 (2^6 = 64).
     -- Tamanho da palavra (8 bits)
@@ -32,7 +32,7 @@ architecture test_cases of tb_memInstr is
 
 begin
 
-    dut : memInstr
+    dut : memoriaInstrucoes
         generic map (
             addressSize => T_ADDR,  
             dataSize    => T_DATA,
@@ -46,7 +46,7 @@ begin
     gera_estimulos : process
     begin
         wait for DELAY;
-        report "Inicio do Testbench para memInstr." severity note;
+        report "Inicio do Testbench para memoriaInstrucoes." severity note;
 
         -- ==========================================================
         -- Leitura Sequencial
