@@ -3,7 +3,7 @@ library std;
 use ieee.numeric_bit.all;
 use std.textio.all;
 
-entity memoriaDados is
+entity memDados is
   generic (
     addressSize : natural := 8;
     dataSize    : natural := 8;
@@ -16,9 +16,9 @@ entity memoriaDados is
     data_i : in  bit_vector (dataSize-1 downto 0);
     data_o : out bit_vector (dataSize-1 downto 0)
   );
-end entity memoriaDados;
+end entity memDados;
 
-architecture dados of memoriaDados is
+architecture dados of memDados is
   type mem_tipo is array(0 to 2**addressSize - 1) of bit_vector(dataSize - 1 downto 0);
 
   impure function init_mem return mem_tipo is
