@@ -14,7 +14,7 @@ end entity adder_n;
  architecture somador_n_arq of adder_n is
     signal soma_C: bit_vector(dataSize downto 0);
 begin
-    soma_T <= bit_vector(unsigned('0' & in0)) + bit_vector(unsigned('0' & in1));
-    sum <= soma_T(dataSize-1 downto 0);
-    cOut <= soma_T(dataSize);
+    soma_C <= bit_vector(unsigned('0' & in0) + (unsigned('0' & in1)));
+    sum <= soma_C(dataSize-1 downto 0);
+    cOut <= soma_C(dataSize);
 end somador_n_arq;
