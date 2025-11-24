@@ -72,6 +72,6 @@ with operation select
 result <= a_sinal AND b_sinal when "00",
           a_sinal OR b_sinal when "01",
           soma when "10",
-          b_sinal when "11";
+          b when "11";
 
 end architecture;
