@@ -19,13 +19,13 @@ entity memDados is
 end entity memDados;
 
 architecture dados of memDados is
-  type mem_tipo is array(0 to 2**addressSize - 1) of bit_vector(dataSize - 1 downto 0);
+  type mem_tipo is array(0 to (2**addressSize) - 1) of bit_vector(7 downto 0);
 
   impure function init_mem return mem_tipo is
     file     arquivo  : text open read_mode is datFileName;
     variable linha    : line;
     variable mem_cont : mem_tipo;
-    variable temp_bv  : bit_vector(dataSize-1 downto 0);
+    variable temp_bv  : bit_vector(7 downto 0);
     variable i        : integer := 0;
 
   begin
@@ -34,7 +34,7 @@ architecture dados of memDados is
       mem_cont(j) := (others => '0');
     end loop;
 
-    while not endfile(arquivo) and i < mem_cont'length loop
+    while not endfile(arquivo) loop
       readline(arquivo, linha);
       read(linha, temp_bv);
       mem_cont(i) := temp_bv;
@@ -51,11 +51,18 @@ architecture dados of memDados is
     begin
       if clock'event and clock = '1' then
         if wr = '1' then
-          mem(to_integer(unsigned(addr))) <= data_i;
+          mem(to_integer(unsigned(addr))+7) <= data_i(63 downto 56);
+          mem(to_integer(unsigned(addr))+6) <= data_i(55 downto 48);
+          mem(to_integer(unsigned(addr))+5) <= data_i(47 downto 40);
+          mem(to_integer(unsigned(addr))+4) <= data_i(39 downto 32);
+          mem(to_integer(unsigned(addr))+3) <= data_i(31 downto 24);
+          mem(to_integer(unsigned(addr))+2) <= data_i(23 downto 16);
+          mem(to_integer(unsigned(addr))+1) <= data_i(15 downto 8);
+          mem(to_integer(unsigned(addr)))   <= data_i(7 downto 0);
         end if;
       end if;
     end process write_process;
 
-  data_o <= mem(to_integer(unsigned(addr)));
+  data_o <= mem(to_integer(unsigned(addr))) & mem(to_integer(unsigned(addr))+1) & mem(to_integer(unsigned(addr))+2) & mem(to_integer(unsigned(addr))+3) & mem(to_integer(unsigned(addr))+4) & mem(to_integer(unsigned(addr))+5) & mem(to_integer(unsigned(addr))+6) & mem(to_integer(unsigned(addr))+7);
 
 end architecture dados;
