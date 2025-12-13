@@ -22,7 +22,7 @@ entity unidadeControle is
   );
 end entity unidadeControle;
 
-architecture comb of unidadeControle is
+architecture unidadeControleArch of unidadeControle is
 begin
 
   process(opcode)
@@ -96,4 +96,4 @@ begin
 
   end process;
 
-end architecture comb;
+end architecture unidadeControleArch;
