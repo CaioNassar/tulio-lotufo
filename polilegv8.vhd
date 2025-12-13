@@ -8,9 +8,48 @@ entity polilegv8 is
   );
 end entity polilegv8;
 
-architecture estrutural of polilegv8 is
+architecture polilegv8Arch of polilegv8 is
 
-  -- Interligação UC <-> Fluxo de Dados
+ -- Declaração dos componentes
+
+  component fluxoDados is
+    port(
+      clock        : in  bit;
+      reset        : in  bit;
+      extendMSB    : in  bit_vector(4 downto 0);
+      extendLSB    : in  bit_vector(4 downto 0);
+      reg2Loc      : in  bit;
+      regWrite     : in  bit;
+      aluSrc       : in  bit;
+      alu_control  : in  bit_vector(3 downto 0);
+      branch       : in  bit;
+      uncondBranch : in  bit;
+      memRead      : in  bit;
+      memWrite     : in  bit;
+      memToReg     : in  bit;
+      opcode       : out bit_vector(10 downto 0)
+    );
+  end component;
+
+  component unidadeControle is
+    port(
+      opcode       : in  bit_vector(10 downto 0);
+      extendMSB    : out bit_vector(4 downto 0);
+      extendLSB    : out bit_vector(4 downto 0);
+      reg2Loc      : out bit;
+      regWrite     : out bit;
+      aluSrc       : out bit;
+      alu_control  : out bit_vector(3 downto 0);
+      branch       : out bit;
+      uncondBranch : out bit;
+      memRead      : out bit;
+      memWrite     : out bit;
+      memToReg     : out bit
+    );
+  end component;
+
+  -- Unidade de Controle <---> Fluxo de Dados
+
   signal opcode_s       : bit_vector(10 downto 0);
 
   signal extendMSB_s    : bit_vector(4 downto 0);
@@ -30,10 +69,9 @@ architecture estrutural of polilegv8 is
 
 begin
 
-  --------------------------------------------------------------------------
-  -- Fluxo de Dados (datapath)
-  --------------------------------------------------------------------------
-  u_fluxoDados : entity work.fluxoDados
+  -- Fluxo de Dados
+  
+  u_fluxoDados : fluxoDados
     port map(
       clock        => clock,
       reset        => reset,
@@ -51,10 +89,9 @@ begin
       opcode       => opcode_s
     );
 
-  --------------------------------------------------------------------------
-  -- Unidade de Controle
-  --------------------------------------------------------------------------
-  u_unidadeControle : entity work.unidadeControle
+ -- Unidade de Controle
+    
+  u_unidadeControle : unidadeControle
     port map(
       opcode       => opcode_s,
       extendMSB    => extendMSB_s,
@@ -70,4 +107,4 @@ begin
       memToReg     => memToReg_s
     );
 
-end architecture estrutural;
+end architecture polilegv8Arch;
