@@ -161,8 +161,10 @@ architecture fluxoDadosArch of fluxoDados is
 
   signal c_pc4  : bit;                        -- Carry-out do adder PC+4 (não utilizado no datapath, mas exigido pela porta do adder_n)
   signal c_br   : bit;                        -- Carry-out do adder do branch target (não utilizado no datapath)
+  signal memReadOUWrite: bit;
 
 begin
+  memReadOUWrite <= memRead or memWrite;
 
   pc_q64 <= (63 downto 7 => '0') & pc_q7;
 
@@ -172,8 +174,6 @@ begin
   rr2_a <= instr(20 downto 16);
   rr2_b <= instr(4 downto 0);
   wr    <= instr(4 downto 0);
-
-  dmem_addr7 <= alu_f(6 downto 0);
 
   pc_src <= (uncondBranch) or (branch and alu_z);
 
@@ -285,6 +285,15 @@ begin
       in1  => dmem_rd,
       sel  => memToReg,
       dOut => wb_data
+    );
+
+  u_mux_maskaddr : mux_n
+    generic map(dataSize => 7)
+    port map(
+      in0 => ZERO64(6 downto 0),
+      in1 => alu_f(6 downto 0),
+      sel => memReadOUWrite,
+      dOut => dmem_addr7
     );
 
   u_add_pc4 : adder_n
