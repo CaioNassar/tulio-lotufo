@@ -23,7 +23,9 @@ end entity fluxoDados;
 architecture fluxoDadosArch of fluxoDados is
 
   constant ZERO64 : bit_vector(63 downto 0) := (others => '0');
-  constant FOUR64 : bit_vector(63 downto 0) := x"0000000000000004";
+  constant QUATRO64 : bit_vector(63 downto 0) := x"0000000000000004";
+
+ -- Declaração dos Componentes
 
   component reg is
     generic (dataSize : natural := 64);
@@ -123,40 +125,42 @@ architecture fluxoDadosArch of fluxoDados is
     );
   end component;
 
-  signal pc_q7     : bit_vector(6 downto 0);
-  signal pc_d7     : bit_vector(6 downto 0);
+ -- Declaração dos Sinais
 
-  signal pc_q64    : bit_vector(63 downto 0);
-  signal pc_next64 : bit_vector(63 downto 0);
-  signal pc_plus4  : bit_vector(63 downto 0);
-  signal pc_branch : bit_vector(63 downto 0);
-  signal pc_src    : bit;
+  signal pc_q7     : bit_vector(6 downto 0);  -- Conteúdo atual do PC (endereço da instrução atual, em bytes), armazenado no registrador PC
+  signal pc_d7     : bit_vector(6 downto 0);  -- Próximo valor a ser carregado no PC no próximo clock (PC+4 ou alvo de branch), truncado para 7 bits
 
-  signal instr     : bit_vector(31 downto 0);
+  signal pc_q64    : bit_vector(63 downto 0); -- PC atual zero-extendido para 64 bits, para permitir somas em 64 bits (adder_n é 64 bits)
+  signal pc_next64 : bit_vector(63 downto 0); -- Próximo PC calculado em 64 bits (saída do mux de PC), antes do truncamento para pc_d7
+  signal pc_plus4  : bit_vector(63 downto 0); -- Resultado de PC + 4 (incremento de 4 bytes por instrução) — endereço sequencial
+  signal pc_branch : bit_vector(63 downto 0); -- Endereço alvo de desvio: (PC+4) + (imediato << 2)
+  signal pc_src    : bit;                     -- Seleção do próximo PC: 0 => pc_plus4; 1 => pc_branch. Implementa branch/uncondBranch
 
-  signal rr1       : bit_vector(4 downto 0);
-  signal rr2_a     : bit_vector(4 downto 0);
-  signal rr2_b     : bit_vector(4 downto 0);
-  signal rr2       : bit_vector(4 downto 0);
-  signal wr        : bit_vector(4 downto 0);
+  signal instr     : bit_vector(31 downto 0); -- Instrução de 32 bits lida da memória de instruções no endereço pc_q7
 
-  signal q1        : bit_vector(63 downto 0);
-  signal q2        : bit_vector(63 downto 0);
+  signal rr1       : bit_vector(4 downto 0);  -- Índice do registrador fonte 1 (Rn) extraído da instrução (instr[9:5])
+  signal rr2_a     : bit_vector(4 downto 0);  -- Índice candidato p/ registrador fonte 2 (Rm) (instr[20:16]) — usado em R-type
+  signal rr2_b     : bit_vector(4 downto 0);  -- Índice candidato p/ registrador fonte 2 (Rt) (instr[4:0]) — usado em D-type/CBZ
+  signal rr2       : bit_vector(4 downto 0);  -- Índice final do registrador fonte 2, após mux reg2Loc (rr2_a vs rr2_b)
+  signal wr        : bit_vector(4 downto 0);  -- Índice do registrador destino de escrita (Rd/Rt), aqui usando instr[4:0]
 
-  signal imm64     : bit_vector(63 downto 0);
-  signal imm64_sl2 : bit_vector(63 downto 0);
+  signal q1        : bit_vector(63 downto 0); -- Dado lido do banco de registradores no endereço rr1 (saída q1 do regfile)
+  signal q2        : bit_vector(63 downto 0); -- Dado lido do banco de registradores no endereço rr2 (saída q2 do regfile)
 
-  signal alu_b     : bit_vector(63 downto 0);
-  signal alu_f     : bit_vector(63 downto 0);
-  signal alu_z     : bit;
+  signal imm64     : bit_vector(63 downto 0); -- Imediato extraído da instrução e sign-extendido para 64 bits (saída do sign_extend)
+  signal imm64_sl2 : bit_vector(63 downto 0); -- Imediato deslocado 2 à esquerda (<<2), usado para calcular alvo de branch (multiplica por 4)
 
-  signal dmem_addr7 : bit_vector(6 downto 0);
-  signal dmem_raw   : bit_vector(63 downto 0);
-  signal dmem_rd    : bit_vector(63 downto 0);
-  signal wb_data    : bit_vector(63 downto 0);
+  signal alu_b     : bit_vector(63 downto 0); -- Operando B efetivo da ALU (saída do mux aluSrc): q2 (registrador) ou imm64 (imediato)
+  signal alu_f     : bit_vector(63 downto 0); -- Resultado da ALU (saída F), usado como resultado aritmético/lógico e também como endereço p/ memDados
+  signal alu_z     : bit;                     -- Flag zero da ALU (Z=1 quando alu_f == 0). Usada para branch condicional (CBZ)
 
-  signal c_pc4  : bit;
-  signal c_br   : bit;
+  signal dmem_addr7 : bit_vector(6 downto 0); -- Endereço (7 bits) aplicado na memória de dados: aqui é alu_f(6 downto 0) (byte address truncado)
+  signal dmem_raw   : bit_vector(63 downto 0); -- Saída direta da memDados (dado lido). Como memDados não tem memRead, ela sempre fornece algo
+  signal dmem_rd    : bit_vector(63 downto 0); -- Dado de leitura “validado” por memRead: se memRead=1, dmem_raw; senão, ZERO64 (via mux)
+  signal wb_data    : bit_vector(63 downto 0); -- Dado final de write-back no regfile: selecionado por memToReg (ALU vs memória)
+
+  signal c_pc4  : bit;                        -- Carry-out do adder PC+4 (não utilizado no datapath, mas exigido pela porta do adder_n)
+  signal c_br   : bit;                        -- Carry-out do adder do branch target (não utilizado no datapath)
 
 begin
 
@@ -195,7 +199,7 @@ begin
       addr => pc_q7,
       data => instr
     );
-    
+
   u_mux_rr2 : mux_n
     generic map(dataSize => 5)
     port map(
@@ -287,7 +291,7 @@ begin
     generic map(dataSize => 64)
     port map(
       in0  => pc_q64,
-      in1  => FOUR64,
+      in1  => QUATRO64,
       sum  => pc_plus4,
       cOut => c_pc4
     );
@@ -313,4 +317,3 @@ begin
   pc_d7 <= pc_next64(6 downto 0);
 
 end architecture fluxoDadosArch;
-
