@@ -34,7 +34,7 @@ architecture instrucao of memoriaInstrucoes is
         return temp_mem;
     end function init_mem;
 
-    signal mem : mem_tipo := init_mem("memInstr_conteudo.dat");
+    signal mem : mem_tipo := init_mem(datFileName);
 
 begin
     data <= mem(to_integer(unsigned(addr))) & mem(to_integer(unsigned(addr))+1) & mem(to_integer(unsigned(addr))+2) & mem(to_integer(unsigned(addr))+3);
