@@ -1,3 +1,7 @@
+library ieee;
+use ieee.numeric_bit.all;
+
+
 entity sign_extend is
   generic (
     dataISize       : natural := 32;
@@ -26,8 +30,9 @@ begin
     variable recorte     : bit_vector(dataOSize-1 downto 0);
     variable i           : integer;
   begin
-    comeco := to_integer(unsigned(inDataStart));
-    fim := to_integer(unsigned(inDataEnd));
+    
+    comeco := integer(unsigned(inDataStart));
+    fim    := integer(unsigned(inDataEnd));
     tamanho := comeco - fim + 1;
     bitExtensor := inData(comeco);
 
