@@ -31,8 +31,8 @@ begin
     variable i           : integer;
   begin
     
-    comeco := integer(unsigned(inDataStart));
-    fim    := integer(unsigned(inDataEnd));
+    comeco := to_integer(unsigned(inDataStart));
+    fim    := to_integer(unsigned(inDataEnd));
     tamanho := comeco - fim + 1;
     bitExtensor := inData(comeco);
 
