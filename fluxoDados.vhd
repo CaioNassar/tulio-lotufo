@@ -193,7 +193,7 @@ begin
     generic map(
       addressSize => 7,
       dataSize    => 32,
-      datFileName => "memInstrPolilegV8.dat"
+      datFileName => "memInstrPolilegv8.dat"
     )
     port map(
       addr => pc_q7,
@@ -259,7 +259,7 @@ begin
     generic map(
       addressSize => 7,
       dataSize    => 64,
-      datFileName => "memDadosInicialPolilegV8.dat"
+      datFileName => "memDadosInicialPolilegv8.dat"
     )
     port map(
       clock  => clock,
