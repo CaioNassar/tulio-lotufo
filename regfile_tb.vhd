@@ -1,9 +1,6 @@
 library ieee;
 use ieee.numeric_bit.all;
 
-library work;
-use work.utils.all;
-
 entity regfile_tb is
 end regfile_tb;
 
