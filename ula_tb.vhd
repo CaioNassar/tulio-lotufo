@@ -107,7 +107,8 @@ begin
     assert F = x"0000000000000000" report "ERRO AND zero" severity failure;
     assert Z = '1' report "ERRO Z no AND zero" severity failure;
 
-    assert false report "ULA TB: Ok" severity failure;
+    report "ULA TB: Ok";
+    wait;
   end process;
 
 end architecture;
