@@ -37,10 +37,14 @@ architecture tb of tb_sign_extend is
   function exp(u : bit_vector; bits : natural; s : bit) return bit_vector is
     variable r : bit_vector(O-1 downto 0);
     variable i : integer;
+    variable char_idx : integer;
   begin
     r := (others => s);
     for i in 0 to integer(bits)-1 loop
-      r(i) := u(i);
+      char_idx := u'length - 1 - i;
+      if char_idx >= 0 then
+        r(i) := u(u'low + char_idx);
+      end if;
     end loop;
     return r;
   end function;
@@ -80,7 +84,7 @@ begin
     -- Caso 4: 1 bit em 23, estende com 1
     inData <= (others => '0'); inData(23) <= '1';
     inDataStart <= bv(23); inDataEnd <= bv(5); wait for 1 ns;
-    assert outData = (outData'range => '1') severity error;
+    assert outData = exp("1000000000000000000", 19, '1') severity error;
 
     -- Caso 5: 1 bit em 5, estende com 0
     inData <= (others => '0'); inData(5) <= '0';
